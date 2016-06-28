@@ -1,5 +1,8 @@
 // vim: ts=2 sw=2
-window.clinicalTimeline = (function(){
+/* start-test-code-not-included-in-build */
+d3 = require('d3');
+/* end-test-code-not-included-in-build */
+var clinicalTimeline = (function(){
   var allData,
       colorCycle = d3.scale.category20(),
       margin = {left: 200, right:30, top: 15, bottom:0},
@@ -29,7 +32,7 @@ window.clinicalTimeline = (function(){
 
   function getTrack(data, track) {
     return data.filter(function(x) {
-      return $.trim(x.label) === $.trim(track);
+      return x.label.trim() === track.trim();
     })[0];
   }
 
@@ -1012,8 +1015,8 @@ window.clinicalTimeline = (function(){
 
   function daysToTimeObject(dayCount) {
       var time = {};
-      var daysPerYear = 365;
-      var daysPerMonth = 30;
+      var daysPerYear = timelineConstants.DAYS_PER_YEAR;
+      var daysPerMonth = timelineConstants.DAYS_PER_MONTH;
       time.daysPerYear = daysPerYear;
       time.daysPerMonth = daysPerMonth;
       time.y = dayCount > 0? Math.floor(dayCount / daysPerYear) : Math.ceil(dayCount / daysPerYear);
@@ -1033,30 +1036,31 @@ window.clinicalTimeline = (function(){
 
   function formatTime(time, zoomLevel) {
       var dayFormat = [];
-      var m;
-      var d;
+      var d, m, y;
 
-      if (time.y === 0 && time.m === 0 && time.d === 0) {
-        dayFormat = "0";
-      } else {
-        switch(zoomLevel) {
-          case "days":
-          case "10days":
-          case "3days":
-            d = time.toDays();
-            dayFormat = d + "d";
-            break;
-          case "months":
-            m = time.m + 12 * time.y;
-            dayFormat = m + "m";
-            break;
-          case "years":
-            y = time.y;
-            dayFormat = y + "y";
-            break;
-          default:
-            console.log("Undefined zoomLevel");
+      if (timelineConstants.ALLOWED_ZOOM_LEVELS.indexOf(zoomLevel) > -1){
+        if (time.y === 0 && time.m === 0 && time.d === 0) {
+          dayFormat = "0";
+        } else {
+          switch(zoomLevel) {
+            case "days":
+            case "3days":
+            case "10days":
+              d = time.toDays();
+              dayFormat = d + "d";
+              break;
+            case "months":
+              m = time.m + 12 * time.y;
+              dayFormat = m + "m";
+              break;
+            case "years":
+              y = time.y;
+              dayFormat = y + "y";
+              break;           
+          }
         }
+      } else {
+        console.log("Undefined zoomLevel");
       }
       return dayFormat;
   }
@@ -1135,7 +1139,7 @@ window.clinicalTimeline = (function(){
       if (numToRound < 0) {
         return -1 * roundDown(-1 * numToRound, multiple);
       } else {
-        return numToRound + multiple - remainder;
+        return Math.round(numToRound + multiple - remainder);
       }
     }
   }
@@ -1149,7 +1153,7 @@ window.clinicalTimeline = (function(){
         if (numToRound < 0) {
           return -1 * roundUp(-1 * numToRound, multiple);
         } else {
-          return numToRound - multiple - remainder;
+          return Math.round(numToRound - remainder);
         }
     }
   }
@@ -1403,5 +1407,19 @@ window.clinicalTimeline = (function(){
     }
   }
   
+  /* start-test-code-not-included-in-build */
+    //functions to be tested come here
+    timeline.__tests__ = {}
+    timeline.__tests__.getTrack = getTrack;
+    timeline.__tests__.daysToTimeObject = daysToTimeObject;
+    timeline.__tests__.formatTime = formatTime;
+    timeline.__tests__.roundDown = roundDown;
+    timeline.__tests__.roundUp = roundUp;
+  /* end-test-code-not-included-in-build */
+  
   return timeline;
 })();
+
+/* start-test-code-not-included-in-build */
+module.exports = clinicalTimeline;
+/* end-test-code-not-included-in-build */
