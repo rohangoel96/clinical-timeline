@@ -5,8 +5,20 @@
   <script src="js/lib/jquery.dataTables.min.js"></script>
   <script src="js/lib/jquery.qtip.min.js"></script>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <script src="js/lib/d3-timeline.js"></script>
   <script src="js/lib/underscore-min.js"></script>
+  <script>
+  /* To make node specific functions work in browser, include fake require
+  * function and module object. */
+  var require = function(module) {
+    if (typeof window[module] === "undefined") {
+      return {};
+    } else {
+      return window[module];
+    }
+  };
+  var module = {};
+  </script>
+  <script src="js/lib/d3-timeline.js"></script>
   <script src="js/clinicalTimeline.js"></script>
   <script src="js/sanity.js"></script>
   <script src="js/parser.js"></script>

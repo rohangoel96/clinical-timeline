@@ -690,3 +690,7 @@
     return timeline;
   };
 })();
+
+if (typeof module === "object" && module.exports) {
+  module.exports = d3.timeline;
+ }

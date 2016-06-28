@@ -1,5 +1,6 @@
 // vim: ts=2 sw=2
-window.clinicalTimeline = (function(){
+d3 = require('d3');
+var clinicalTimeline = (function(){
   var allData,
       colorCycle = d3.scale.category20(),
       margin = {left: 200, right:30, top: 15, bottom:0},
@@ -1405,3 +1406,5 @@ window.clinicalTimeline = (function(){
   
   return timeline;
 })();
+
+module.exports = clinicalTimeline;
