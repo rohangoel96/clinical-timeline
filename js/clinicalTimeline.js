@@ -1,5 +1,7 @@
 // vim: ts=2 sw=2
+/* start-test-code-not-included-in-build */
 d3 = require('d3');
+/* end-test-code-not-included-in-build */
 var clinicalTimeline = (function(){
   var allData,
       colorCycle = d3.scale.category20(),
@@ -30,7 +32,7 @@ var clinicalTimeline = (function(){
 
   function getTrack(data, track) {
     return data.filter(function(x) {
-      return $.trim(x.label) === $.trim(track);
+      return x.label.trim() === track.trim();
     })[0];
   }
 
@@ -1404,7 +1406,15 @@ var clinicalTimeline = (function(){
     }
   }
   
+  /* start-test-code-not-included-in-build */
+    //functions to be tested comes here
+    timeline.__tests__ = {}
+    timeline.__tests__.getTrack = getTrack;
+  /* end-test-code-not-included-in-build */
+  
   return timeline;
 })();
 
+/* start-test-code-not-included-in-build */
 module.exports = clinicalTimeline;
+/* end-test-code-not-included-in-build */

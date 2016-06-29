@@ -39,7 +39,8 @@ var clinicalTimelineParser = (function() {
 
   return transformToTimelineJSON;
 })();
-
+/* start-test-code-not-included-in-build */
 if (typeof module === "object" && module.exports) {
   module.exports = clinicalTimelineParser;
 }
+/* end-test-code-not-included-in-build */

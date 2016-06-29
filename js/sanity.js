@@ -52,7 +52,8 @@ var clinicalTimelineSanityChecker = (function() {
 
   return validateData;
 })();
-
+/* start-test-code-not-included-in-build */
 if (typeof module === "object" && module.exports) {
   module.exports = clinicalTimelineSanityChecker;
 }
+/* end-test-code-not-included-in-build */
