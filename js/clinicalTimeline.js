@@ -28,7 +28,8 @@ var clinicalTimeline = (function(){
       overviewX = 0,
       advancedView=false,
       chart=null,
-      tooltipOnVerticalLine = true;
+      tooltipOnVerticalLine = true,
+      allowedZoomLevels = ["days", "3days", "10days", "months", "years"];
 
   function getTrack(data, track) {
     return data.filter(function(x) {
@@ -1036,30 +1037,31 @@ var clinicalTimeline = (function(){
 
   function formatTime(time, zoomLevel) {
       var dayFormat = [];
-      var m;
-      var d;
+      var d, m, y;
 
-      if (time.y === 0 && time.m === 0 && time.d === 0) {
-        dayFormat = "0";
-      } else {
-        switch(zoomLevel) {
-          case "days":
-          case "10days":
-          case "3days":
-            d = time.toDays();
-            dayFormat = d + "d";
-            break;
-          case "months":
-            m = time.m + 12 * time.y;
-            dayFormat = m + "m";
-            break;
-          case "years":
-            y = time.y;
-            dayFormat = y + "y";
-            break;
-          default:
-            console.log("Undefined zoomLevel");
+      if (allowedZoomLevels.indexOf(zoomLevel) > -1){
+        if (time.y === 0 && time.m === 0 && time.d === 0) {
+          dayFormat = "0";
+        } else {
+          switch(zoomLevel) {
+            case "days":
+            case "3days":
+            case "10days":
+              d = time.toDays();
+              dayFormat = d + "d";
+              break;
+            case "months":
+              m = time.m + 12 * time.y;
+              dayFormat = m + "m";
+              break;
+            case "years":
+              y = time.y;
+              dayFormat = y + "y";
+              break;           
+          }
         }
+      } else {
+        console.log("Undefined zoomLevel");
       }
       return dayFormat;
   }
@@ -1138,7 +1140,7 @@ var clinicalTimeline = (function(){
       if (numToRound < 0) {
         return -1 * roundDown(-1 * numToRound, multiple);
       } else {
-        return numToRound + multiple - remainder;
+        return Math.round(numToRound + multiple - remainder);
       }
     }
   }
@@ -1152,7 +1154,7 @@ var clinicalTimeline = (function(){
         if (numToRound < 0) {
           return -1 * roundUp(-1 * numToRound, multiple);
         } else {
-          return numToRound - multiple - remainder;
+          return Math.round(numToRound - remainder);
         }
     }
   }
@@ -1407,9 +1409,13 @@ var clinicalTimeline = (function(){
   }
   
   /* start-test-code-not-included-in-build */
-    //functions to be tested comes here
+    //functions to be tested come here
     timeline.__tests__ = {}
     timeline.__tests__.getTrack = getTrack;
+    timeline.__tests__.daysToTimeObject = daysToTimeObject;
+    timeline.__tests__.formatTime = formatTime;
+    timeline.__tests__.roundDown = roundDown;
+    timeline.__tests__.roundUp = roundUp;
   /* end-test-code-not-included-in-build */
   
   return timeline;
