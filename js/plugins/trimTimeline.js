@@ -6,7 +6,6 @@ window.clinicalTimeline.trimTimeline = function (maxDays, minDays, getZoomLevel,
   var tolerance = (maxDays - minDays) * 0.2; //cut the timeline after how much of inactivity
   var timelineElements = []
   var breakTimelineForKink = []
-  var toDelete = []
   var tickCoordiantesKink = []
   var extraKink;
   var svg = d3.select(".timeline")
@@ -25,43 +24,46 @@ window.clinicalTimeline.trimTimeline = function (maxDays, minDays, getZoomLevel,
                   .y(function(d) { return d.y; })
                   .interpolate("linear");
 
-  function getExraKink (zoomLevel) {
-    switch(zoomLevel) {
-          case "days": return 1;
-          case "3days": return 3;
-          case "10days": return 10;
-          case "months": return 30;
-          case "years": return 365;
-          default:
-            console.log("Undefined zoomLevel");
-        }
-  }
+  var tickValuesInt = tickValues.map( function (x) {
+      return Math.round(x);
+  });
+
+  var ticksToShowKink = [tickValuesInt[0], tickValuesInt[tickValuesInt.length - 1]]
 
   d3.selectAll(".timeline g rect, .timeline g circle").each(function(d, i){
-    if (d.starting_time) {
-      timelineElements.push(parseInt(d.starting_time))
+    if (d.starting_time && d.ending_time) {
+      if (timelineElements.indexOf(d.starting_time) == -1) {
+        timelineElements.push(parseInt(d.starting_time));
+      }
+      
+      if (timelineElements.indexOf(d.ending_time) == -1) {
+        timelineElements.push(parseInt(d.ending_time));
+      }
     }
   });
 
   timelineElements.sort(function(a, b) { return a - b; })
 
-  timelineElements.forEach(function (item, index) {
-    var first = timelineElements[index];
-    var second = index != (timelineElements.length - 1) ? timelineElements[index + 1] : maxDays;;
-
-    if (second - first > tolerance) {
-      //delete ticks where there is no activity.
-      for (var i = first + getExraKink(zoomLevel) ; i < second - getExraKink(zoomLevel); i++) {
-        toDelete.push(i)
+  timelineElements.forEach(function (value, index) {
+    if (value > tickValuesInt[0] && value < tickValuesInt[tickValuesInt.length - 1]) {
+      for (var i = 0; i < tickValuesInt.length - 1; i++) {
+        //TODO : Optimise with binary search
+        if (value >= tickValuesInt[i] && value <= tickValuesInt[i+1]) {
+          break;
+        }
       }
-    } 
+      if (i != tickValuesInt.length - 1) {
+        if (ticksToShowKink.indexOf(tickValuesInt[i]) == -1) {
+          ticksToShowKink.push(tickValuesInt[i])
+        }
+        if (ticksToShowKink.indexOf(tickValuesInt[i + 1]) == -1) {
+          ticksToShowKink.push(tickValuesInt[i + 1])
+        }
+      }
+    }
   });
 
-  //calculate the ticks to be shown after trimmming 
-  var tickValuesInt = tickValues.map( function (x) {
-      return Math.round(x);
-  });
-  var ticksToShowKink = tickValuesInt.filter(function(x) { return toDelete.indexOf(x) < 0 })
+  ticksToShowKink.sort(function(a, b) { return a - b; })
 
   if (tickValues.length > 5) {
       ticksToShowKink.forEach(function (item, index) {
