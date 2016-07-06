@@ -1,6 +1,9 @@
 var expect = require('chai').expect;
 
 global.timelineConstants = require('../../js/timelineConstants.js');
+var clinicalTimeline = require('../../js/clinicalTimeline.js');
+var exportTimeline = require('../../js/exportTimeline.js');
+
 var oldConsoleLog = null;
 /**
  * Disable the logger to prevent any console.log from clinicalTimeline
@@ -20,14 +23,13 @@ var enableLogger =  function() {
 
 describe('clinicalTimeline', function() {
   it('should exist', function() {
-   	var clinicalTimeline = require('../../js/clinicalTimeline.js');
     expect(clinicalTimeline).to.not.be.undefined;
   });
 });
 
 describe('clinicalTimeline.getTrack', function() {
     it('should return the track Status when requesting track Status', function() {
-        var getTrack = require('../../js/clinicalTimeline.js').__tests__.getTrack;
+        var getTrack = clinicalTimeline.__tests__.getTrack;
         var data1 = require('../data/data1.json');
         expect("Status").to.equal(getTrack(data1, "Status").label);
     });
@@ -35,7 +37,7 @@ describe('clinicalTimeline.getTrack', function() {
 
 describe('clinicalTimeline.daysToTimeObject', function() {
     it('should return time object with year, months and days', function() {
-    	var daysToTimeObject = require('../../js/clinicalTimeline.js').__tests__.daysToTimeObject;
+    	var daysToTimeObject = clinicalTimeline.__tests__.daysToTimeObject;
     	var data1 = JSON.stringify({daysPerYear : 365, daysPerMonth :30, y : 0, m : 0, d : 25});
     	var data2 = JSON.stringify({daysPerYear : 365, daysPerMonth :30, y : 0, m : 4, d : 22});
     	var data3 = JSON.stringify({daysPerYear : 365, daysPerMonth :30, y : 1, m : 1, d : 5});
@@ -48,8 +50,8 @@ describe('clinicalTimeline.daysToTimeObject', function() {
 
 describe('clinicalTimeline.formatTime', function() {
     it('should should properly format the input time', function() {
-    	var daysToTimeObject = require('../../js/clinicalTimeline.js').__tests__.daysToTimeObject;
-    	var formatTime = require('../../js/clinicalTimeline.js').__tests__.formatTime;
+    	var daysToTimeObject = rclinicalTimeline.__tests__.daysToTimeObject;
+    	var formatTime = clinicalTimeline.__tests__.formatTime;
      	
      	expect("0").to.equal(formatTime(daysToTimeObject(0), "days"));
      	expect("0").to.equal(formatTime(daysToTimeObject(0), "3days"));
@@ -78,7 +80,7 @@ describe('clinicalTimeline.formatTime', function() {
 
 describe('clinicalTimeline.roundDown', function() {
     it('should round down a number to it\'s nearest multiple', function() {
-     	var roundDown = require('../../js/clinicalTimeline.js').__tests__.roundDown;
+     	var roundDown = clinicalTimeline.__tests__.roundDown;
      	expect(10).to.equal(roundDown(12.4, 5));
      	expect(-15).to.equal(roundDown(-12.4, 5));
      	expect(0).to.equal(roundDown(0.1, 2));
@@ -90,7 +92,7 @@ describe('clinicalTimeline.roundDown', function() {
 
 describe('clinicalTimeline.roundUp', function() {
     it('should round up a number to it\'s nearest multiple', function() {
-    	var roundUp = require('../../js/clinicalTimeline.js').__tests__.roundUp;
+    	var roundUp = clinicalTimeline.__tests__.roundUp;
      	expect(15).to.equal(roundUp(12.4, 5));
      	expect(-10).to.equal(roundUp(-12.4, 5));
      	expect(2).to.equal(roundUp(0.1, 2));
