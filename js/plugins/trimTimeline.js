@@ -12,6 +12,28 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
   var zoomLevel = getZoomLevel(minDays, maxDays, width);
   var tickValues = getTickValues(minDays, maxDays, zoomLevel);
 
+  var getDiffernceTicksDays = function (zoomLevel) {
+    var diff;
+    switch(zoomLevel) {
+    case "days":
+      diff = 1;
+      break;
+    case "3days":
+      diff = 3;
+      break;
+    case "10days":
+      diff = 10;
+      break;
+    case "months":
+      diff = 30;
+      break;
+    case "years":
+      diff = 365;
+      break;           
+    }
+    return diff;
+  }
+
   //drawing the kink svg
   var kinkLineData = [ { "x": 75,  "y": 0 }, { "x": 80, "y": 5 },
                        { "x": 85,  "y": -5}, { "x": 90, "y": 5},
@@ -31,14 +53,12 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
 
   d3.selectAll(".timeline g rect, .timeline g circle").each(function(d, i){
     if (d.starting_time && d.ending_time) {
-      if (timelineElements.indexOf(d.starting_time) == -1) {
-        timelineElements.push(parseInt(d.starting_time));
+     for (var i = parseInt(d.starting_time); i <= parseInt(d.ending_time); i += getDiffernceTicksDays(zoomLevel)) {
+        if (timelineElements.indexOf(i) == -1) {
+          timelineElements.push(parseInt(i));
+        }
       }
-      
-      if (timelineElements.indexOf(d.ending_time) == -1) {
-        timelineElements.push(parseInt(d.ending_time));
-      }
-    }
+     }
   });
 
   timelineElements.sort(function(a, b) { return a - b; })
