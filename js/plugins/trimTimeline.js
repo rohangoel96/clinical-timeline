@@ -49,16 +49,14 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
       return Math.round(x);
   });
 
-  var ticksToShowKink = [tickValuesInt[0], tickValuesInt[tickValuesInt.length - 1]]
+  var ticksToShow = [tickValuesInt[0], tickValuesInt[tickValuesInt.length - 1]]
 
   d3.selectAll(".timeline g rect, .timeline g circle").each(function(d, i){
-    if (d.starting_time && d.ending_time) {
-     for (var i = parseInt(d.starting_time); i <= parseInt(d.ending_time); i += getDiffernceTicksDays(zoomLevel)) {
-        if (timelineElements.indexOf(i) == -1) {
-          timelineElements.push(parseInt(i));
-        }
+   for (var i = parseInt(d.starting_time); i <= parseInt(d.ending_time); i += getDiffernceTicksDays(zoomLevel)) {
+      if (timelineElements.indexOf(i) == -1) {
+        timelineElements.push(parseInt(i));
       }
-     }
+    }
   });
 
   timelineElements.sort(function(a, b) { return a - b; })
@@ -72,32 +70,32 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
         }
       }
       if (i != tickValuesInt.length - 1) {
-        if (ticksToShowKink.indexOf(tickValuesInt[i]) == -1) {
-          ticksToShowKink.push(tickValuesInt[i])
+        if (ticksToShow.indexOf(tickValuesInt[i]) == -1) {
+          ticksToShow.push(tickValuesInt[i])
         }
-        if (ticksToShowKink.indexOf(tickValuesInt[i + 1]) == -1) {
-          ticksToShowKink.push(tickValuesInt[i + 1])
+        if (ticksToShow.indexOf(tickValuesInt[i + 1]) == -1) {
+          ticksToShow.push(tickValuesInt[i + 1])
         }
       }
     }
   });
 
-  ticksToShowKink.sort(function(a, b) { return a - b; })
-
-  if (tickValues.length > 5) {
-      ticksToShowKink.forEach(function (item, index) {
-      //calculate the position to place the kinks
-
-      if (index < ticksToShowKink.length -1) {
-        var first = ticksToShowKink[index];
-        var second = ticksToShowKink[index + 1];
-
-        if (second - first > tolerance) {
-          breakTimelineForKink.push(index + 1)
-        } 
-      }
-    });
-  }
+  ticksToShow.sort(function(a, b) { return a - b; })
+  var prevPush = 0;
+  ticksToShow.forEach(function (item, index) {
+  //calculate the position to place the kinks
+    if (index < ticksToShow.length -1) {
+      var first = ticksToShow[index];
+      var second = ticksToShow[index + 1];
+      if (second - first > tolerance) {
+        var toPush = index + 1;
+        if (toPush - prevPush > 1) {
+          breakTimelineForKink.push(toPush)
+        }
+        prevPush = toPush;
+      } 
+    }
+  });
 
   var xScale = d3.time.scale()
       .domain([margin.left,  width - margin.right])
@@ -105,7 +103,7 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
 
   var shiftAtBreak = 0; //make space for adding the kink
 
-  for (var i = 0; i < ticksToShowKink.length; i++) {
+  for (var i = 0; i < ticksToShow.length; i++) {
     if (breakTimelineForKink.indexOf(i) > -1) {
       shiftAtBreak += 30;
     }
@@ -113,14 +111,14 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
     var breakAdjust = breakTimelineForKink.length * 30;
 
     //calculate the position of the tick to be shown after trimming
-    tickCoordinatesKink.push(margin.left + shiftAtBreak + (i * ((width - margin.right - margin.left - breakAdjust) / (ticksToShowKink.length - 1 ))))
+    tickCoordinatesKink.push(margin.left + shiftAtBreak + (i * ((width - margin.right - margin.left - breakAdjust) / (ticksToShow.length - 1 ))))
   }
 
   var xAxis = d3.svg.axis()
     .scale(xScale)
     .orient("top")
     .tickValues(tickCoordinatesKink)
-    .tickFormat(function(d, i) { return formatTime(daysToTimeObject(ticksToShowKink[i]), zoomLevel) });
+    .tickFormat(function(d, i) { return formatTime(daysToTimeObject(ticksToShow[i]), zoomLevel) });
 
   // Add the trimmmed axis
   svg.append("g") 
@@ -131,7 +129,7 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
   var kink = svg.append("g")
         .attr("class", "kink")
 
-  for (var i = 0; i < ticksToShowKink.length; i++) {
+  for (var i = 0; i < ticksToShow.length; i++) {
     //add kinks at the places where timeline is cut
     if (breakTimelineForKink.indexOf(i) > -1) {
       var kinkPosition = (tickCoordinatesKink[i-1] + tickCoordinatesKink[i])/2;
@@ -159,11 +157,11 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
    */
   function getLowerBoundIndex(ele) {
     var low = 0;
-    var high = ticksToShowKink.length - 1;
+    var high = ticksToShow.length - 1;
 
     while(low < high){
       var mid = Math.round((low + high)/2);
-      if (ticksToShowKink[mid] > ele) {
+      if (ticksToShow[mid] > ele) {
         high = mid - 1;
       } else {
         low = mid;
@@ -179,10 +177,10 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
     var first = getLowerBoundIndex(pos);
     var second = first + 1;
 
-    if (second > ticksToShowKink.length - 1) {
+    if (second > ticksToShow.length - 1) {
       return tickCoordinatesKink[first];
     }
-    return tickCoordinatesKink[first] + (pos - ticksToShowKink[first]) * (tickCoordinatesKink[second] - tickCoordinatesKink[first]) / (ticksToShowKink[second] - ticksToShowKink[first]);
+    return tickCoordinatesKink[first] + (pos - ticksToShow[first]) * (tickCoordinatesKink[second] - tickCoordinatesKink[first]) / (ticksToShow[second] - ticksToShow[first]);
   }
 
   d3.selectAll("[id^=timelineItem]").attr("cx", function(x) {
