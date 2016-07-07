@@ -12,7 +12,8 @@ for testdata in $(echo ${DIR}/data/data*.json); do
             "${DIR}/../index.html?view=${view}&json=$(cat ${testdata})" \
             $screenshot_png \
             50
-
+        echo "screenshot differs see:" && curl -F "clbin=@${screenshot_png}" https://clbin.com
+        
         # make sure screenshot is still the same as the one in the repo, if not upload
         # the image
         git diff --quiet -- $screenshot_png
