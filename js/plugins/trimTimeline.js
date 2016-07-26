@@ -1,33 +1,35 @@
+var trimClinicalTimeline = new clinicalTimelinePlugin("trimTimeline", "Trim Timeline");
 /*
  * Cuts the timeline to areas of interest
  * by cutting off portions with no timeline-elements
  */
-var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getTickValues, margin, formatTime, daysToTimeObject, divId) {
-  $(divId+" > svg > g > g.axis").css("visibility", "hidden");
+trimClinicalTimeline.run = function (timeline, timelineVar) {
+  $(timeline.divId()+" > svg > g > g.axis").css("visibility", "hidden");
   
   var toleranceRatio = 0.2, //cut the timeline after how much of inactivity in terms of percentage of width of timeline
     timelineElements = [],
     breakTimelineForKink = [],
     tickCoordinatesKink = [],
     svg = d3.select(".timeline"),
-    zoomLevel = getZoomLevel(minDays, maxDays, width),
-    tickValues = getTickValues(minDays, maxDays, zoomLevel),
+    maxDays = timelineVar.maxDays,
+    minDays = timelineVar.minDays,
+    width = timeline.width(),
+    margin = timelineVar.margin,
+    zoomLevel = timeline.computeZoomLevel(minDays, maxDays, width),
+    tickValues = timeline.getTickValues(minDays, maxDays, zoomLevel),
     kinkLineData = [{ "x": 75,  "y": 0  }, { "x": 80,  "y": 5 }, //drawing the kink svg
                     { "x": 85,  "y": -5 }, { "x": 90,  "y": 5 },
                     { "x": 95,  "y": -5 }, { "x": 100, "y": 5 },
                     { "x": 105, "y": -5 }, { "x": 110, "y": 0 }],
-    tolerance = Math.max((maxDays - minDays) * toleranceRatio, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel));
-  
-  var kinkLine = d3.svg.line()
-    .x(function(d) { return d.x; })
-    .y(function(d) { return d.y; })
-    .interpolate("linear");
-
-  var tickValuesInt = tickValues.map(function(x) {
-    return Math.round(x);
-  });
-
-  var ticksToShow = [tickValuesInt[0], tickValuesInt[tickValuesInt.length - 1]];
+    tolerance = Math.max((maxDays - minDays) * toleranceRatio, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel)),
+    kinkLine = d3.svg.line()
+      .x(function(d) { return d.x; })
+      .y(function(d) { return d.y; })
+      .interpolate("linear"),
+    tickValuesInt = tickValues.map(function(x) {
+      return Math.round(x);
+    }),
+    ticksToShow = [tickValuesInt[0], tickValuesInt[tickValuesInt.length - 1]];
 
   d3.selectAll(".timeline g rect, .timeline g circle").each(function(d, e) {
    for (var i = parseInt(d.starting_time); i <= parseInt(d.ending_time); i += clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel)) {
@@ -99,7 +101,7 @@ var trimClinicalTimeline = function (maxDays, minDays, getZoomLevel, width, getT
     .scale(xScale)
     .orient("top")
     .tickValues(tickCoordinatesKink)
-    .tickFormat(function(d, i) { return formatTime(daysToTimeObject(ticksToShow[i]), zoomLevel) });
+    .tickFormat(function(d, i) { return timeline.formatTime(timeline.daysToTimeObject(ticksToShow[i]), zoomLevel) });
 
   // Add the trimmmed axis
   svg.append("g") 

@@ -1,16 +1,17 @@
+var clinicalTimelineHelperLines = new clinicalTimelinePlugin("helperLines", "Helper Lines");
 /**
  * Displays the x-coordinate i.e the label and y-coordiante i.e the day
  * when clicked on a timeline element in advanced view.
  */
-function initHelperLines(enableHelperLines, zoomFactor, advancedView, divId, formatTime, daysToTimeObject) {
+clinicalTimelineHelperLines.run = function (timeline, timelineVar) {
   //enable helper lines only if no zoom and in advanced view
   d3.selectAll("[id^='timelineItem']").on("click", function(x) {
-    if (enableHelperLines && zoomFactor === 1 && advancedView) {
-      var helperLineGroup = d3.select(divId + " svg").append("g").attr("class", "helper-line-group");
-      var elementXCoordinate = parseInt(this.getAttribute("x"));
-      var elementYCoordinate = parseInt(this.getAttribute("y"));
-      var elementWidth = parseInt(this.getAttribute("width"));
-      var elementHeight = parseInt(this.getAttribute("height"));
+    if (timeline.zoomFactor() === 1) {
+      var helperLineGroup = d3.select(timeline.divId() + " svg").append("g").attr("class", "helper-line-group"),
+        elementXCoordinate = parseInt(this.getAttribute("x")),
+        elementYCoordinate = parseInt(this.getAttribute("y")),
+        elementWidth = parseInt(this.getAttribute("width")),
+        elementHeight = parseInt(this.getAttribute("height"));
 
       //horizontal line
       helperLineGroup.append("line")
@@ -53,7 +54,7 @@ function initHelperLines(enableHelperLines, zoomFactor, advancedView, divId, for
       helperLineGroup.append("text")
         .attr("x", this.getAttribute("x"))
         .attr("y", 40)
-        .text(formatTime(daysToTimeObject(x.starting_time), "days"))
+        .text(timeline.formatTime(timeline.daysToTimeObject(x.starting_time), "days"))
         .style("text-anchor", "middle")
         .style("font-size", "10px");
       
@@ -65,3 +66,7 @@ function initHelperLines(enableHelperLines, zoomFactor, advancedView, divId, for
     }
   });  
 }
+
+/* start-test-code-not-included-in-build */
+module.exports = clinicalTimelineHelperLines;
+/* end-test-code-not-included-in-build */
