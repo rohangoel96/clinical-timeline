@@ -1,8 +1,14 @@
+/**
+ * Plugin to add exporting functionality to the timeline
+ * namely PNG, PDF and SVG
+ * @type {clinicalTimelinePlugin}
+ */
 var clinicalTimelineExporter = new clinicalTimelinePlugin("exportTimeline", "Export", {exportDivId : "#export-div"});
 /**
- * Adds exporting functionality to the timeline
- * namely PNG, PDF and SVG
- * @return {object} handler functions for different exporting options
+ * runs the clinicalTimelineExporter plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
  */
 clinicalTimelineExporter.run = function(timeline, timelineVar, spec) {
   $(spec.exportDivId).css("visibility", "visible");
@@ -87,6 +93,12 @@ clinicalTimelineExporter.run = function(timeline, timelineVar, spec) {
   }
 };
 
+/**
+ * cleans up the HTML of the export-button
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
 clinicalTimelineExporter.remove = function (timeline, timelineVar, spec) {
   $(spec.exportDivId).css("visibility", "hidden");
 }

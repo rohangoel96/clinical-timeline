@@ -1,9 +1,16 @@
-var trimClinicalTimeline = new clinicalTimelinePlugin("trimTimeline", "Trim Timeline");
-/*
- * Cuts the timeline to areas of interest
+/**
+ * Plugin which trims the timeline to areas of interest
  * by cutting off portions with no timeline-elements
+ * @type {clinicalTimelinePlugin}
  */
-trimClinicalTimeline.run = function (timeline, timelineVar) {
+var trimClinicalTimeline = new clinicalTimelinePlugin("trimTimeline", "Trim Timeline");
+/**
+ * runs the trimClinicalTimeline plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
+trimClinicalTimeline.run = function (timeline, timelineVar, spec) {
   $(timeline.divId()+" > svg > g > g.axis").css("visibility", "hidden");
   
   var toleranceRatio = 0.2, //cut the timeline after how much of inactivity in terms of percentage of width of timeline
@@ -135,9 +142,11 @@ trimClinicalTimeline.run = function (timeline, timelineVar) {
   }
 
   /**
-   * returns updated x positions for the data elements according to th trimmed timeline 
+   * returns updated x coordinate for the data elements according to th trimmed timeline 
+   * @param  {int} pos starting time of the clinical timeline element
+   * @return {int}     updated x coordinate post-trimming
    */
-  function getXPosAdjustedForKink(x, pos) {   
+  function getXPosAdjustedForKink(pos) {   
     var first = clinicalTimelineUtil.getLowerBoundIndex(ticksToShow, pos);
     var second = first + 1;
 
@@ -149,12 +158,12 @@ trimClinicalTimeline.run = function (timeline, timelineVar) {
 
   d3.selectAll("[id^=timelineItem]").attr("cx", function(x) {
     //update x position for circular elements in the trimmed timeline
-    return getXPosAdjustedForKink(x, x.starting_time);
+    return getXPosAdjustedForKink(x.starting_time);
   });
 
   d3.selectAll("[id^=timelineItem]").attr("x", function(x) {
     //update x position for rectangular elements in the trimmed timeline
-    return getXPosAdjustedForKink(x, x.starting_time);
+    return getXPosAdjustedForKink(x.starting_time);
   });
 
   var widthMultiplier = (tickCoordinatesKink[1] - tickCoordinatesKink[0])/ (d3.transform(d3.select($(".axis .tick")[1]).attr("transform")).translate[0] - d3.transform(d3.select($(".axis .tick")[0]).attr("transform")).translate[0]);

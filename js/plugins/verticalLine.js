@@ -1,9 +1,15 @@
-var clinicalTimelineVerticalLine = new clinicalTimelinePlugin("verticalLine", "Vertical Timeline", {tooltipControllerId: "#tooltip-controller"});
-/*
- * Handles the drawing of a vertical line
- * on hover over the timeline in the simple view
+/**
+ * Plugin to handle the drawing of a vertical line 
+ * on hovering over the timeline
+ * @type {clinicalTimelinePlugin}
  */
-var tooltipOnVerticalLine = true;
+var clinicalTimelineVerticalLine = new clinicalTimelinePlugin("verticalLine", "Vertical Timeline", {tooltipControllerId: "#tooltip-controller", hoverBegin: 200, hoverEnd: 770});
+/**
+ * runs the clinicalTimelineVerticalLine plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
 clinicalTimelineVerticalLine.run = function(timeline, timelineVar, spec) {
   var hoverLineGroup = d3.select(".timeline").append("g")
     .attr("class", "hover-line");
@@ -16,21 +22,33 @@ clinicalTimelineVerticalLine.run = function(timeline, timelineVar, spec) {
     .attr("y2", 268)
     .style("stroke", "#ccc");
 
-  var svgHeight = d3.select(timeline.divId() + " svg")[0][0].getBoundingClientRect().height;
-
-  var hoverText = hoverLineGroup.append("text")
-    .attr("class", "hover-text")
-    .attr("y", svgHeight - 10) //place text 10 pixels above the bottom of the svg
-    .attr("font-size", 12)
-    .attr("fill", "#888");
-
-  var hoverBegin = 200, hoverEnd = 770; //dont allow hover beyond this point
-
-  //scale to map the amount scrolled according to the svg coordinates to the days i.e
-  //clinical-timeline coordianted
-   var hoverScale = d3.time.scale()
+  var svgHeight = d3.select(timeline.divId() + " svg")[0][0].getBoundingClientRect().height,
+    /**
+     * text to be displayed along with hoverLine
+     */
+    hoverText = hoverLineGroup.append("text")
+      .attr("class", "hover-text")
+      .attr("y", svgHeight - 10) //place text 10 pixels above the bottom of the svg
+      .attr("font-size", 12)
+      .attr("fill", "#888"),
+    /**
+     * variables to confine the hoverable area
+     * @type {number}
+     */
+    hoverBegin = spec.hoverBegin, 
+    hoverEnd = spec.hoverEnd,
+    /**
+     * scale to map the coordinates hovered upon (according to the svg coordinates) to the clinical-timeline days
+     */
+    hoverScale = d3.time.scale()
       .domain([hoverBegin, hoverEnd])
-      .range([timelineVar.beginning , timelineVar.ending]);
+      .range([timelineVar.beginning , timelineVar.ending]),
+    /**
+     * Boolean to toggle the visibility of tooltips along with the vertical line
+     * @type {boolean}
+     */
+    tooltipOnVerticalLine = true;
+
 
   hoverLineGroup.style("opacity", 0);
 
@@ -71,10 +89,15 @@ clinicalTimelineVerticalLine.run = function(timeline, timelineVar, spec) {
       $(tooltipControllerId+' a').text("Hide tooltips on vertical-line");
       tooltipOnVerticalLine = true;
     }
-    timeline();
   });
 }
 
+/**
+ * cleans up the HTML of the verticalLine
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
 clinicalTimelineVerticalLine.remove = function (timeline, timelineVar, spec) {
   $(spec.tooltipControllerId).css("visibility", "hidden");
 }

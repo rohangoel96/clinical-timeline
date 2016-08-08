@@ -1,9 +1,16 @@
+/**
+ * Plugin to display the x-coordinate i.e the label and y-coordiante i.e the day
+ * when clicked on a timeline element
+ * @type {clinicalTimelinePlugin}
+ */
 var clinicalTimelineHelperLines = new clinicalTimelinePlugin("helperLines", "Helper Lines");
 /**
- * Displays the x-coordinate i.e the label and y-coordiante i.e the day
- * when clicked on a timeline element in advanced view.
+ * runs the clinicalTimelineHelperLines plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
  */
-clinicalTimelineHelperLines.run = function (timeline, timelineVar) {
+clinicalTimelineHelperLines.run = function (timeline, timelineVar, spec) {
   //enable helper lines only if no zoom and in advanced view
   d3.selectAll("[id^='timelineItem']").on("click", function(x) {
     if (timeline.zoomFactor() === 1) {
@@ -58,9 +65,10 @@ clinicalTimelineHelperLines.run = function (timeline, timelineVar) {
         .style("text-anchor", "middle")
         .style("font-size", "10px");
       
-      $(this).qtip("hide");  //hide qtip when helper line visible
-      //remove the helper lines after 1s 
+      //hide qtip when helper line visible
+      $(this).qtip("hide");
       setTimeout(function() {
+        //remove the helper lines after 1s 
         helperLineGroup.remove();
       }, 1000);
     }

@@ -1,9 +1,16 @@
-var clinicalTimelineOverviewAxis = new clinicalTimelinePlugin("overviewAxis", "Overview Axis");
-/*
- * Handles the drawing and panning of the overviewAxis
+/**
+ * Plugin which dandles the drawing and panning of the overviewAxis
  * drawn below the actual timeline
- */  
-clinicalTimelineOverviewAxis.run = function (timeline, timelineVar) {
+ * @type {clinicalTimelinePlugin}
+ */
+var clinicalTimelineOverviewAxis = new clinicalTimelinePlugin("overviewAxis", "Overview Axis");
+/**
+ * runs the clinicalTimelineOverviewAxis plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
+clinicalTimelineOverviewAxis.run = function (timeline, timelineVar, spec) {
   var margin = timelineVar.margin,
     overviewAxisWidth = timeline.overviewAxisWidth(),
     chart = timelineVar.chart,
@@ -25,8 +32,10 @@ clinicalTimelineOverviewAxis.run = function (timeline, timelineVar) {
     {"height" : 2, "width" : overviewAxisWidth, "x" : 0, "y" : 44, "fill" : "#ccc"},
     {"height" : 18, "width" : 2, "x" : 0, "y" : 26, "fill" : "#ccc"},
     {"height" : 18, "width" : 2, "x" : overviewAxisWidth - 2, "y" : 26, "fill" : "#ccc"}];   
-
-  //scale for drawing the the overviewAxis and ticks in the specified width
+  
+  /**
+   * scale for drawing the the overviewAxis and ticks in the specified width
+   */
   var xScaleOverview = d3.time.scale()
     .domain([minDayTick, maxDayTick])
     .range([0 + margin.overviewAxis.left , overviewAxisWidth - margin.overviewAxis.right]);
@@ -72,18 +81,20 @@ clinicalTimelineOverviewAxis.run = function (timeline, timelineVar) {
   var zoomedWidth = chart.width();
   var rectangleOverviewWidth = (overviewAxisWidth - margin.overviewAxis.left - margin.overviewAxis.right) / zoomFactor;
 
-  //scale to map the amount dragged on the zoomedWidth of original timeline to the overviewAxis width
-  //helps position the overview-rectangle correctly if original timeline dragged
+  /**
+   * scale to map the amount dragged on the zoomedWidth of original timeline to the overviewAxis width
+   * helps position the overview-rectangle correctly if original timeline dragged
+   */
   var xScaleOverviewZoomed = d3.time.scale()
     .domain([0, -zoomedWidth])
     .range([0 + startAllowedOverview, overviewAxisWidth - endAllowedOverview]);
-
-  //scale to map the amount dragged on the overview-rectangle to the orignal timeline's zoomedWidth
-  //helps position the original-timeline correctly if the overview rectagle is dragged
+  /**
+   * scale to map the amount dragged on the overview-rectangle to the orignal timeline's zoomedWidth
+   * helps position the original-timeline correctly if the overview rectagle is dragged
+   */
   var xScaleRectangle = d3.time.scale()
     .domain([0 + startAllowedOverview, overviewAxisWidth - endAllowedOverview])
     .range([0 , -zoomedWidth]);
-
 
   var dragChart = d3.behavior.drag()
     .on("drag", function(d,i) {
@@ -116,7 +127,6 @@ clinicalTimelineOverviewAxis.run = function (timeline, timelineVar) {
       .style("cursor", "move")
       .call(dragRectangle);     
     d3.select(timeline.divId()+" svg").call(dragChart);
-
 }
 
 /* start-test-code-not-included-in-build */

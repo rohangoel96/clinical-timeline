@@ -1,8 +1,16 @@
-var clinicalTimelineZoom = new clinicalTimelinePlugin("zoom", "Zoom");
-/*
- * Add rectangular zoom selection. Use brush to zoom. After zooming in, scroll mouse or drag to pan.
+/**
+ * Plugin to add rectangular zoom selection. 
+ * Use brush to zoom. After zooming in, scroll mouse or drag to pan.
+ * @type {clinicalTimelinePlugin}
  */
-clinicalTimelineZoom.run = function(timeline, timelineVar) {
+var clinicalTimelineZoom = new clinicalTimelinePlugin("zoom", "Zoom");
+/**
+ * runs the clinicalTimelineZoom plugin
+ * @param  {function} timeline    clinicalTimeline object
+ * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
+ * @param  {Object}   [spec=null] specification specific to the plugin
+ */
+clinicalTimelineZoom.run = function(timeline, timelineVar, spec) {
   var maxDays = timelineVar.maxDays,
     minDays = timelineVar.minDays
     beginning = timelineVar.beginning,
@@ -19,8 +27,10 @@ clinicalTimelineZoom.run = function(timeline, timelineVar) {
     gBoundingBox = g[0][0].getBoundingClientRect();
 
   if (timeline.zoomFactor() === 1) {
-    // Add rectangular zoom selection
-    // zoom in after brush ends
+    /**
+     * Add rectangular zoom selection
+     * zoom in after brush ends
+     */
     var brushend = function() {
       var originalZoomLevel = timeline.computeZoomLevel(minDays, maxDays, width);
       //handle positioning of the overview rectangle post zoom in.
@@ -103,7 +113,14 @@ clinicalTimelineZoom.run = function(timeline, timelineVar) {
     zoomExplanation(divId, svg, "Scroll/drag to move", "visible", 180);
     d3.select(divId + " svg").style("cursor", "move");
   }
-
+  /**
+   * adds textual explanation for the present current zoom state 
+   * @param  {string} divId      divId for clinical-timeline
+   * @param  {Object} svg        clinical-timeline's svg object
+   * @param  {string} text       explanation's text
+   * @param  {string} visibility css property to hide/show the explanation
+   * @param  {number} pos        position of the explanation's text
+   */
   function zoomExplanation(divId, svg, text, visibility, pos) {
     d3.select(divId + " svg")
       .insert("text")
