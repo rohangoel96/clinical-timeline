@@ -162,11 +162,12 @@ var clinicalTimeline = (function(){
       chart: chart
     }
 
-    clinicalTimelinePlugins.forEach(function (plugin) {
-      if(plugin.handler.run instanceof Function && plugin.enabled){
-        plugin.handler.run(timeline, clinicalTimelineVar, plugin.handler.spec);
+    clinicalTimelinePlugins.forEach(function (element) {
+      var plugin = element.obj
+      if(plugin.run instanceof Function && element.enabled){
+        plugin.run(timeline, clinicalTimelineVar, element.obj.spec);
       } else if(!plugin.enabled) {
-        plugin.handler.remove(timeline, clinicalTimelineVar, plugin.handler.spec);
+        plugin.remove(timeline, clinicalTimelineVar, element.obj.spec);
       }
     });
 

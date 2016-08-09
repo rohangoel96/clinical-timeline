@@ -214,13 +214,13 @@
         .orderAllTooltipTables(["Source","Location"])
         .enableTrackTooltips(true)
         .plugins([
-          {handler: trimClinicalTimeline, enabled: trimmingForSceenshotTest},  
-          {handler: clinicalTimelineHelperLines, enabled: false}, 
-          {handler: clinicalTimelineZoom, enabled: !trimmingForSceenshotTest},
-          {handler: clinicalTimelineOverviewAxis, enabled:!trimmingForSceenshotTest},
-          {handler: clinicalTimelineVerticalLine, enabled: false},
-          {handler: configCheckManager, enabled: true},
-          {handler: clinicalTimelineExporter, enabled: true}
+          {obj: new trimClinicalTimeline("trimTimeline", "Trim Timeline"), enabled: trimmingForSceenshotTest},  
+          {obj: new clinicalTimelineHelperLines("helperLines", "Helper Lines"), enabled: false}, 
+          {obj: new clinicalTimelineZoom("zoom", "Zoom"), enabled: !trimmingForSceenshotTest},
+          {obj: new clinicalTimelineOverviewAxis("overviewAxis", "Overview Axis"), enabled:!trimmingForSceenshotTest},
+          {obj: new clinicalTimelineVerticalLine("verticalLine", "Vertical Timeline", {tooltipControllerId: "#tooltip-controller", hoverBegin: 200, hoverEnd: 770}), enabled: false},
+          {obj: new configCheckManager("configButton", null, {configDivId: "#timeline-wrapper #config-div"}), enabled: true},
+          {obj: new clinicalTimelineExporter("exportTimeline", "Export", {exportDivId : "#export-div"}), enabled: true}
         ])
         .collapseAll();
       timeline();
@@ -236,16 +236,16 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" id="config-dropdown">
-          <!-- dynamically populated via js/plugins/clinicalTimelineUtil.plugins -->
+          <!-- dynamically populated via js/plugins/configButton.plugins -->
         </ul>
     </div>
     <div class="dropdown" id="export-div">
       <button class="btn btn-default dropdown-toggle" id="export-button" type="button" data-toggle="dropdown">Export As
       <span class="caret"></span></button>
       <ul class="dropdown-menu">
-        <li><a href='javascript:clinicalTimelineExporter.run(null, null, {exportDivId : "#export-div"}).generateSVG()'>SVG Image</a></li>
-        <li><a href='javascript:clinicalTimelineExporter.run(null, null, {exportDivId : "#export-div"}).generatePNG(true)'>PNG Image</a></li>
-        <li><a href='javascript:clinicalTimelineExporter.run(null, null, {exportDivId : "#export-div"}).generatePDF()'>PDF Document</a></li>
+        <li><a href='javascript:(new clinicalTimelineExporter()).run(null, null, {exportDivId : "#export-div"}).generateSVG()'>SVG Image</a></li>
+        <li><a href='javascript:(new clinicalTimelineExporter()).run(null, null, {exportDivId : "#export-div"}).generatePNG(true)'>PNG Image</a></li>
+        <li><a href='javascript:(new clinicalTimelineExporter()).run(null, null, {exportDivId : "#export-div"}).generatePDF()'>PDF Document</a></li>
       </ul>
     </div>
     <div id="timeline">
