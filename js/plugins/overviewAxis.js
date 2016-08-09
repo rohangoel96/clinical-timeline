@@ -7,25 +7,25 @@ class clinicalTimelineOverviewAxis extends clinicalTimelinePlugin {
   /**
    * runs the clinicalTimelineOverviewAxis plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
-    var margin = timelineVar.margin,
+  run(timeline, spec) {
+    var readOnlyVars = timeline.getReadOnlyVars(),
+      margin = readOnlyVars.margin,
       overviewAxisWidth = timeline.overviewAxisWidth(),
-      chart = timelineVar.chart,
+      chart = readOnlyVars.chart,
       zoomFactor = timeline.zoomFactor(),
       overviewSVG = d3.select(".overview"),
-      originalZoomLevel = timeline.computeZoomLevel(timelineVar.minDays, timelineVar.maxDays, timeline.width()),
-      overviewAxisTicks = timeline.getTickValues(timelineVar.minDays, timelineVar.maxDays, originalZoomLevel),
+      originalZoomLevel = timeline.computeZoomLevel(readOnlyVars.minDays, readOnlyVars.maxDays, timeline.width()),
+      overviewAxisTicks = timeline.getTickValues(readOnlyVars.minDays, readOnlyVars.maxDays, originalZoomLevel),
       minDayTick = overviewAxisTicks[0],
       maxDayTick =  overviewAxisTicks[overviewAxisTicks.length-1],
       overViewScale = d3.time.scale()
-        .domain([clinicalTimelineUtil.roundDown(timelineVar.minDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel)), clinicalTimelineUtil.roundUp(timelineVar.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))])
+        .domain([clinicalTimelineUtil.roundDown(readOnlyVars.minDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel)), clinicalTimelineUtil.roundUp(readOnlyVars.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))])
         .range([0 + margin.overviewAxis.left, overviewAxisWidth - margin.overviewAxis.right]),
-      zoomLevel = timeline.computeZoomLevel(timelineVar.minDays, timelineVar.maxDays, timeline.width() * zoomFactor),
-      startAllowedOverview = overViewScale(clinicalTimelineUtil.roundDown(timelineVar.minDays, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel))) - overViewScale(clinicalTimelineUtil.roundDown(timelineVar.minDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))),
-      endAllowedOverview = overViewScale(clinicalTimelineUtil.roundUp(timelineVar.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))) - overViewScale(clinicalTimelineUtil.roundUp(timelineVar.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel)));
+      zoomLevel = timeline.computeZoomLevel(readOnlyVars.minDays, readOnlyVars.maxDays, timeline.width() * zoomFactor),
+      startAllowedOverview = overViewScale(clinicalTimelineUtil.roundDown(readOnlyVars.minDays, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel))) - overViewScale(clinicalTimelineUtil.roundDown(readOnlyVars.minDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))),
+      endAllowedOverview = overViewScale(clinicalTimelineUtil.roundUp(readOnlyVars.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(originalZoomLevel))) - overViewScale(clinicalTimelineUtil.roundUp(readOnlyVars.maxDays, clinicalTimelineUtil.getDifferenceTicksDays(zoomLevel)));
 
     var overviewBorderData = [{"height" : 2, "width" : overviewAxisWidth, "x" : 0, "y" : 24, "fill" : "#ccc"},
       {"height" : 2, "width" : overviewAxisWidth, "x" : 0, "y" : 44, "fill" : "#ccc"},

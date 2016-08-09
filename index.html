@@ -219,7 +219,7 @@
           {obj: new clinicalTimelineZoom("zoom", "Zoom"), enabled: !trimmingForSceenshotTest},
           {obj: new clinicalTimelineOverviewAxis("overviewAxis", "Overview Axis"), enabled:!trimmingForSceenshotTest},
           {obj: new clinicalTimelineVerticalLine("verticalLine", "Vertical Timeline", {tooltipControllerId: "#tooltip-controller", hoverBegin: 200, hoverEnd: 770}), enabled: false},
-          {obj: new configCheckManager("configButton", null, {configDivId: "#timeline-wrapper #config-div"}), enabled: true},
+          {obj: new configCheckManager("configButton", null, {configUlId: "#timeline-wrapper #config-div #config-dropdown"}), enabled: true},
           {obj: new clinicalTimelineExporter("exportTimeline", "Export", {exportDivId : "#export-div"}), enabled: true}
         ])
         .collapseAll();

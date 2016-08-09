@@ -6,20 +6,19 @@ class configCheckManager extends clinicalTimelinePlugin {
   /**
    * runs the configCheckManager plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
-    $(spec.configDivId + " #config-dropdown").html("")
+  run(timeline, spec) {
+    $(spec.configUlId).html("")
     //populate all the available plugins dynamically
     timeline.plugins().forEach(function(element) {
       if(element.obj.name){
         var pluginCheckBox = $('<input type="checkbox" id="'+element.obj.id+'">').attr("checked", element.enabled)
-        $(spec.configDivId + " #config-dropdown").append(pluginCheckBox).append('<li>'+element.obj.name+'</li>');
+        $(spec.configUlId).append(pluginCheckBox).append('<li>'+element.obj.name+'</li>');
       }
     });
 
-    $(spec.configDivId + " #config-dropdown input").on("change", function () {
+    $(spec.configUlId + " input").on("change", function () {
       configHandler(this.id, this.checked);
     });
 
@@ -40,11 +39,10 @@ class configCheckManager extends clinicalTimelinePlugin {
   /**
    * cleans up the HTML of the configButton
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  remove(timeline, timelineVar, spec) {
-    $(this.spec.configDivId).remove();
+  remove(timeline, spec) {
+    $(this.spec.configUlId).remove();
   }
 }
 

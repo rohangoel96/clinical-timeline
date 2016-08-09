@@ -7,10 +7,9 @@ class trimClinicalTimeline extends clinicalTimelinePlugin {
   /**
    * runs the trimClinicalTimeline plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
+  run(timeline, spec) {
     $(timeline.divId()+" > svg > g > g.axis").css("visibility", "hidden");
 
     var toleranceRatio = 0.2, //cut the timeline after how much of inactivity in terms of percentage of width of timeline
@@ -18,10 +17,10 @@ class trimClinicalTimeline extends clinicalTimelinePlugin {
       breakTimelineForKink = [],
       tickCoordinatesKink = [],
       svg = d3.select(".timeline"),
-      maxDays = timelineVar.maxDays,
-      minDays = timelineVar.minDays,
+      maxDays = timeline.getReadOnlyVars().maxDays,
+      minDays = timeline.getReadOnlyVars().minDays,
       width = timeline.width(),
-      margin = timelineVar.margin,
+      margin = timeline.getReadOnlyVars().margin,
       zoomLevel = timeline.computeZoomLevel(minDays, maxDays, width),
       tickValues = timeline.getTickValues(minDays, maxDays, zoomLevel),
       kinkLineData = [{ "x": 75,  "y": 0  }, { "x": 80,  "y": 5 }, //drawing the kink svg

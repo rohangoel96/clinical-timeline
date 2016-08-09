@@ -7,10 +7,9 @@ class clinicalTimelineExporter extends clinicalTimelinePlugin {
   /**
    * runs the clinicalTimelineExporter plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
+  run(timeline, spec) {
     $(spec.exportDivId).css("visibility", "visible");
     return {
       /**
@@ -95,10 +94,9 @@ class clinicalTimelineExporter extends clinicalTimelinePlugin {
   /**
    * cleans up the HTML of the export-button
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  remove(timeline, timelineVar, spec) {
+  remove(timeline, spec) {
     $(spec.exportDivId).css("visibility", "hidden");
   }
 }

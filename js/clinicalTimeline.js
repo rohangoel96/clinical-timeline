@@ -27,7 +27,7 @@ var clinicalTimeline = (function(){
     overviewX = margin.overviewAxis.left,
     chart = null,
     clinicalTimelinePlugins,
-    clinicalTimelineVar;
+    clinicalTimelineReadOnlyVars;
 
   function getTrack(data, track) {
     return data.filter(function(x) {
@@ -153,7 +153,7 @@ var clinicalTimeline = (function(){
       .attr("class", "overview");
 
     //object to be shared by all plugins
-    clinicalTimelineVar = {
+    clinicalTimelineReadOnlyVars = {
       beginning: beginning,
       ending: ending,
       minDays: minDays,
@@ -165,9 +165,9 @@ var clinicalTimeline = (function(){
     clinicalTimelinePlugins.forEach(function (element) {
       var plugin = element.obj
       if(plugin.run instanceof Function && element.enabled){
-        plugin.run(timeline, clinicalTimelineVar, element.obj.spec);
+        plugin.run(timeline, element.obj.spec);
       } else if(!plugin.enabled) {
-        plugin.remove(timeline, clinicalTimelineVar, element.obj.spec);
+        plugin.remove(timeline, element.obj.spec);
       }
     });
 
@@ -899,6 +899,10 @@ var clinicalTimeline = (function(){
     if (!arguments.length) return translateX;
     translateX = x;
   };
+
+  timeline.getReadOnlyVars = function () {
+    return clinicalTimelineReadOnlyVars;
+  }
 
   timeline.collapseAll = function() {
     var singlePointTracks = allData.filter(function(trackData) {

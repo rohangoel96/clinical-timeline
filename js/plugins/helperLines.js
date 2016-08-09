@@ -7,10 +7,9 @@ class clinicalTimelineHelperLines extends clinicalTimelinePlugin {
   /**
    * runs the clinicalTimelineHelperLines plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
+  run(timeline, spec) {
     //enable helper lines only if no zoom and in advanced view
     d3.selectAll("[id^='timelineItem']").on("click", function(x) {
       if (timeline.zoomFactor() === 1) {

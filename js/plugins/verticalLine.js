@@ -7,10 +7,9 @@ class clinicalTimelineVerticalLine extends clinicalTimelinePlugin {
   /**
    * runs the clinicalTimelineVerticalLine plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
+  run(timeline, spec) {
     var hoverLineGroup = d3.select(".timeline").append("g")
       .attr("class", "hover-line");
 
@@ -42,7 +41,7 @@ class clinicalTimelineVerticalLine extends clinicalTimelinePlugin {
        */
       hoverScale = d3.time.scale()
         .domain([hoverBegin, hoverEnd])
-        .range([timelineVar.beginning , timelineVar.ending]),
+        .range([timeline.getReadOnlyVars().beginning , timeline.getReadOnlyVars().ending]),
       /**
        * Boolean to toggle the visibility of tooltips along with the vertical line
        * @type {boolean}
@@ -94,10 +93,9 @@ class clinicalTimelineVerticalLine extends clinicalTimelinePlugin {
   /**
    * cleans up the HTML of the verticalLine
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  remove(timeline, timelineVar, spec) {
+  remove(timeline, spec) {
     $(spec.tooltipControllerId).css("visibility", "hidden");
   }
 }

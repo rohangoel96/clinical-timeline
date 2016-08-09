@@ -5,11 +5,11 @@ class clinicalTimelinePlugin {
 	this.spec = spec || null;
   }
   
-  run(timeline, timelineVar, spec) {
+  run(timeline, spec) {
     console.log("A plugin must have a run function to be functional");
   }
   
-  remove () {
+  remove(timeline, spec) {
 
   }
 }

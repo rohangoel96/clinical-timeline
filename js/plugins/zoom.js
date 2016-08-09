@@ -7,21 +7,21 @@ class clinicalTimelineZoom extends clinicalTimelinePlugin {
   /**
    * runs the clinicalTimelineZoom plugin
    * @param  {function} timeline    clinicalTimeline object
-   * @param  {Object}   timelineVar all the constant configurations for the clinicalTimeline 
    * @param  {Object}   [spec=null] specification specific to the plugin
    */
-  run(timeline, timelineVar, spec) {
-    var maxDays = timelineVar.maxDays,
-      minDays = timelineVar.minDays,
-      beginning = timelineVar.beginning,
-      ending = timelineVar.ending,
-      margin = timelineVar.margin,
+  run(timeline, spec) {
+    var readOnlyVars = timeline.getReadOnlyVars(),
+      maxDays = readOnlyVars.maxDays,
+      minDays = readOnlyVars.minDays,
+      beginning = readOnlyVars.beginning,
+      ending = readOnlyVars.ending,
+      margin = readOnlyVars.margin,
       divId = timeline.divId(),
       width = timeline.width(),
       roundDown = clinicalTimelineUtil.roundDown,
       roundUp = clinicalTimelineUtil.roundUp,
       overviewAxisWidth = timeline.overviewAxisWidth(),
-      chart = timelineVar.chart,
+      chart = readOnlyVars.chart,
       svg = d3.select(divId + " svg"),
       g = d3.select(divId + " svg g"),
       gBoundingBox = g[0][0].getBoundingClientRect();
@@ -48,8 +48,8 @@ class clinicalTimelineZoom extends clinicalTimelinePlugin {
          timeline.zoomFactor(timeline.computeZoomFactor("days", minDays, maxDays, width));
         }
 
-        var zoomLevel = timeline.computeZoomLevel(timelineVar.minDays, timelineVar.maxDays, timeline.width() * timeline.zoomFactor());
-        var tickValues = timeline.getTickValues(timelineVar.minDays, timelineVar.maxDays, zoomLevel);
+        var zoomLevel = timeline.computeZoomLevel(readOnlyVars.minDays, readOnlyVars.maxDays, timeline.width() * timeline.zoomFactor());
+        var tickValues = timeline.getTickValues(readOnlyVars.minDays, readOnlyVars.maxDays, zoomLevel);
         // TODO: Translation post zooming is not entirely correct
         if (xDaysRect > minDays) {
           var xZoomScale = d3.time.scale()
